@@ -1,0 +1,35 @@
+set spoolfile=imaps://imap.gmail.com:993/INBOX
+set imap_user=drdarkraven@gmail.com
+set folder=imaps://imap.gmail.com:993/
+mailboxes =INBOX =toplanguage =storage =projecteuler =translate
+set header_cache=~/.mutt/hcache
+set message_cachedir=~/.mutt/bdcache
+set certificate_file =~/.mutt/certificates
+set postponed = +[Gmail]/Drafts
+set imap_passive=no
+set imap_keepalive=300
+set sendmail="/usr/bin/msmtp"
+set alias_file="~/.mutt/alias"
+source ~/.mutt/alias
+set query_command="aboot --mutt-query '%s'"
+macro index,pager A "<pipe-message>abook --add-email-quiet<return>" "add the sender address to abook"
+macro generic,index,pager \ca "<shell-escape>abook<return>" "launch abook"
+set mail_check=120
+set sort=threads
+set sort_aux=reverse-last-date-received
+set pager_index_lines=10
+alternative_order text/html text/enriched text/plain 
+set editor=vim
+set edit_headers
+set quit=yes
+lists toplanguage translate
+source ~/.mutt/color
+auto_view text/html
+charset-hook ^us-ascii$ utf8
+charset-hook ^iso-8859-1$ utf8
+set markers=no 
+#charset-hook .* utf8
+set charset="utf8"
+set locale="zh_CN.utf8" 
+#set strict_mime=no
+set assumed_charset="GB18030:UTF-8" 
