@@ -1,0 +1,110 @@
+#!/bin/dash -f
+MODKEY=Mod4
+#WMII_FONT="xft:WenQuanYi Micro Hei Light Mono-9"
+WMII_FONT="xft:sans-9"
+WMII_TERM="urxvtc"
+#WMII_NORMCOLORS='#000000 #333333 #000000'
+#WMII_FOCUSCOLORS='#000000 #ffffff #000000'
+status() {
+	echo -n  label $(sensors | grep --color=never 'Core0' | sed 's/.*Core0 Temp: */CPU:/g') '|' \
+	$(mpc | sed -r 'N;s/\n/ /g;N;s/\n/ /g;s/\[.*\]//g;s/#//g;s/volume: */Vo:/g;s/\S*: *off//g;s/(\S\S)\S*: *on/\u\1 /g;s/\s+/ /g;s/\s+$//g') '|' \
+	$(date +"%Y/%m/%d,%a,%H:%M:%S")
+}
+startup() {
+	urxvtd &
+	xset m 8/5 3/2 
+	witray -s 16 &
+	mpc volume 79
+	wmiir write /rules <<!
+	/MPlayer|VLC/ floating=on 
+	/^ROX-Filer:/ group=0
+	/wesnoth.*/ floating=on
+	/Gimp/ floating=on
+	/ncmpc_to_music_tag/ tags=music
+	/Are you sure/ floating=on
+	/^skype.*Options$/ floating=on
+!
+	/home/shui/cpuu.sh &
+}
+local_events(){
+	cat <<'!'
+Event Unresponsive
+	wmiir xwrite /client/$1/tags "UNRES"
+Menu Client-3-Kill
+	wmiir xwrite /client/$1/ctl slay &
+Menu Client-3-Delete
+	wmiir xwrite /client/$1/ctl kill &
+#Event RightBarMouseDown
+#	if [ "$2" = "weather" ]; then
+#		if [ $1 = 1 ]; then
+			#wmii9menu $(/home/shui/getweather)
+#			wmii9menu showeather
+#		fi
+#	fi
+Event ClientMouseDown
+	if [ $2 = 3 ]; then
+		wi_fnmenu Client $2 $1 &
+	fi
+	if [ $2 = 4 ]; then
+		wmiir xwrite /tag/sel/ctl select up
+	fi
+	if [ $2 = 5 ]; then
+		wmiir xwrite /tag/sel/ctl select down
+	fi
+	if [ $2 = 6 ]; then
+		wmiir xwrite /tag/sel/ctl send sel left
+	fi
+	if [ $2 = 7 ]; then
+		wmiir xwrite /tag/sel/ctl send sel right
+	fi
+KeyGroup Custom
+Key $MODKEY-z
+	mpc toggle 
+Key $MODKEY-v
+	mpc next
+Key $MODKEY-c
+	mpc prev
+Key $MODKEY-x
+	mpc shuffle
+	mpc playlist > ~/.mympcplaylist
+	sed -r -i 's/(.*)/\L\1/' ~/.mympcplaylist
+Key $MODKEY-Shift-r
+	mpc repeat
+Key $MODKEY-Shift-s
+	mpc single
+Key $MODKEY-w
+	mpc volume +3
+Key $MODKEY-q
+	mpc volume -3
+Key $MODKEY-r
+	mpc seek +3%
+Key $MODKEY-e
+	mpc seek -3%
+Key $MODKEY-Shift-z
+	isplaying=$(mpc | grep -c '\[play')
+	mpc update --wait
+	mpc clear
+	mpc ls | mpc add
+	mpc playlist > ~/.mympcplaylist
+	sed -r -i 's/(.*)/\L\1/' ~/.mympcplaylist
+	[ $isplaying = 0 ] || mpc toggle
+Key $MODKEY-Shift-b
+	/home/shui/mysync.sh &
+Key $MODKEY-Control-l
+	xlock &
+Key $MODKEY-Control-s
+	ibus-daemon -r -d --xim
+	feh --bg-center ~/图片/nerv.jpg
+	pidgin &
+	urxvtc -title ncmpc_to_music_tag -e ncmpc -m
+	opera &
+	xchat &
+	urxvtc
+Key $MODKEY-Shift-x
+	export tempname="$(cat ~/.mympcplaylist | wimenu)"
+	if [ "x$tempname" != "x" ]; then
+		mpc play $(cat ~/.mympcplaylist | grep --color=never -n "$tempname" | sed 's/:.*$//')
+	fi
+!
+true;
+}
