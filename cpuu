@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+$a=`top -b -n 1 | grep -E '^ *[0-9]'`;
+@_=split /\n/,$a;
+$total=0;
+$tops='';
+$count=0;
+for (@_){
+	s/^ *//g;
+	@tmp=split / +/,$_;
+	$total+=$tmp[8];
+	$name=$tmp[11];
+	$lname=length $name;
+	#$name.=' 'x(8-$lname) if $lname<8;
+	if($lname>8){
+		$name= substr $name,0,8;
+	}
+	$pcpu=$tmp[8];
+	#if($pcpu<10.0){
+	#	$pcpu='0'.$pcpu;
+	#}
+	$tops.=($name.' ') if $count<3;
+	$tops.=($pcpu.'% ') if $count<3;
+	$count++;
+}
+print "$total% $tops";
