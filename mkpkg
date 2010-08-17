@@ -1,0 +1,11 @@
+#!/bin/sh
+printf "\033[1;32m====\033[1;0m\033[1;1mDo Clean Work\033[1;0m\033[1;32m====\033[1;0m\n"
+rm -v *.pkg.tar.*
+delpkgs ./PKGBUILD $HOME/dr/
+printf "\033[1;32m====\033[1;0m\033[1;1mStart Build\033[1;0m\033[1;32m====\033[1;0m\n"
+makepkg -s --skipinteg
+if [ $? == 0 ]; then 
+	printf "\033[1;32m====\033[1;0m\033[1;1mAdd Repo\033[1;0m\033[1;32m====\033[1;0m\n"
+	repo-add $HOME/dr/dr.db.tar.gz $HOME/dr/`getpkgname ./PKGBUILD`
+fi
+printf "\033[1;32m====\033[1;0m\033[1;1mStopped\033[1;0m\033[1;32m====\033[1;0m\n"

@@ -1,0 +1,10 @@
+#!/usr/bin/perl
+open PKG,$ARGV[0];
+while(<PKG>){
+	if(/pkgname=(?<name>[\w\-]+)/){
+		$path=$ARGV[1].'/'.$+{name}.'*.pkg.tar.*';
+		last;
+	}
+}
+print "$path\n";
+unlink glob($path) or die "Failed";

@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+open PKG,$ARGV[0];
+$name='';
+while(<PKG>){
+	if(/pkgname=(?<name>[\w\-]+)/){
+		chomp $+{name};
+		$name.=$+{name};
+		last;
+	}
+}
+#while(<PKG>){
+#	if(/pkgver=(?<ver>.+$)/){
+#		chomp $+{ver};
+#		$name.="-".$+{ver};
+#		last;
+#	}
+#}
+#while(<PKG>){
+#	if(/pkgrel=(?<rel>.+$)/){
+#		chomp $+{rel};
+#		$name.="-".$+{rel};
+#		last;
+#	}
+#}
+$name.="-*.pkg.tar.xz";
+print "$name\n";
