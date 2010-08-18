@@ -38,7 +38,7 @@ XTerm*faceName:monospace
 Emacs.Font:monospace 11
 !Xcursor.theme:Vanilla-DMZ
 Xcursor.theme:Neutral
-URxvt*perl-ext: default,matcher,tabbed,url-select
+URxvt*perl-ext: default,matcher,tabbedex,url-select
 URxvt.keysym.M-u:    perl:url-select:select_next
 URxvt.underlineURLs: true
 URxvt*urlLauncher:opera
