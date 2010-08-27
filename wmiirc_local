@@ -14,7 +14,6 @@ startup() {
 	urxvtd -q -o -f &
 	xset m 8/5 3/2 
 	witray -s 16 &
-	mpc volume 79
 	wmiir write /rules <<!
 	/MPlayer|VLC/ floating=on 
 	/^ROX-Filer:/ group=0
@@ -95,6 +94,7 @@ Key $MODKEY-Control-l
 Key $MODKEY-Control-s
 	ibus-daemon -r -d --xim
 	feh --bg-center ~/图片/nerv.jpg
+	synergys
 	pidgin &
 	urxvtc -title ncmpc_to_music_tag -e ncmpc -m
 	opera &
