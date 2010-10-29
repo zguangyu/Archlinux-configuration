@@ -6,8 +6,9 @@ WMII_TERM="urxvtc"
 #WMII_NORMCOLORS='#000000 #333333 #000000'
 #WMII_FOCUSCOLORS='#000000 #ffffff #000000'
 status() {
-	echo -n  label $(sensors | grep --color=never 'Core0' | sed 's/.*Core0 Temp: */CPU:/g') '|' \
-	$(mpc | sed -r 'N;s/\n/ /g;N;s/\n/ /g;s/\[.*\]//g;s/#//g;s/volume: */Vo:/g;s/\S*: *off//g;s/(\S\S)\S*: *on/\u\1 /g;s/\s+/ /g;s/\s+$//g') '|' \
+	echo -n  label $(acpi -b | sed 's/Battery\s*[0-9]:\s*//g;s/\([0-9]\)[^0-9]*$/\1/g') '|' \
+	$(sensors | grep --color=never 'Core' | sed 's/.*Core */CPU/g' | sed 's/(.*)//g') '|' \
+	$(mpc | sed -r 'N;s/\n/ /g;N;s/\n/ /g;s/\[(playing|(p)aused)\]/\u\2/g;s/#//g;s/volume: */Vo:/g;s/\S*: *off//g;s/(\S\S)\S*: *on/\u\1 /g;s/\s+/ /g;s/\s+$//g;s|[0-9]+/[0-9]+||g;s/\s+[0-9]+:+[0-9]+//g;s/\([0-9]*%\)\s//g') '|' \
 	$(date +"%Y/%m/%d,%a,%H:%M:%S")
 }
 startup() {
@@ -22,11 +23,12 @@ startup() {
 	/ncmpc_to_music_tag/ tags=music
 	/Are you sure/ floating=on
 	/^skype.*Options$/ floating=on
+	/fetion/ floating=on
 !
 	/home/shui/cpuu.sh &
 }
 local_events(){
-	cat <<'!'
+wi_events <<'!'
 Event Unresponsive
 	wmiir xwrite /client/$1/tags "UNRES"
 Menu Client-3-Kill
@@ -65,8 +67,6 @@ Key $MODKEY-c
 	mpc prev
 Key $MODKEY-x
 	mpc shuffle
-	mpc playlist > ~/.mympcplaylist
-	sed -r -i 's/(.*)/\L\1/' ~/.mympcplaylist
 Key $MODKEY-Shift-r
 	mpc repeat
 Key $MODKEY-Shift-s
@@ -81,11 +81,19 @@ Key $MODKEY-e
 	mpc seek -3%
 Key $MODKEY-Shift-z
 	isplaying=$(mpc | grep -c '\[play')
-	mpc update --wait
+	mpc update
 	mpc clear
 	mpc ls | mpc add
-	mpc playlist > ~/.mympcplaylist
-	sed -r -i 's/(.*)/\L\1/' ~/.mympcplaylist
+	[ $isplaying = 0 ] || mpc toggle
+Key $MODKEY-Control-z
+	isplaying=$(mpc | grep -c '\[play')
+	mpc update 
+	export tmpname="$(mpc listall | /home/shui/dlist.pl  | sort -u | wimenu)"
+	echo "$tmpname" >> /home/shui/tmptmptmp
+	if [ "x$tmpname" != "x" ]; then
+		mpc clear
+		echo $tmpname | mpc add
+	fi
 	[ $isplaying = 0 ] || mpc toggle
 Key $MODKEY-Shift-b
 	/home/shui/mysync.sh &
@@ -93,18 +101,29 @@ Key $MODKEY-Control-l
 	xlock &
 Key $MODKEY-Control-s
 	ibus-daemon -r -d --xim
-	feh --bg-center ~/图片/nerv.jpg
-	synergys
-	pidgin &
+	feh --bg-scale ~/miku.jpg
 	urxvtc -title ncmpc_to_music_tag -e ncmpc -m
-	opera &
-	xchat &
+	wicd-client &
 	urxvtc
 Key $MODKEY-Shift-x
-	export tempname="$(cat ~/.mympcplaylist | wimenu)"
-	if [ "x$tempname" != "x" ]; then
-		mpc play $(cat ~/.mympcplaylist | grep --color=never -n "$tempname" | sed 's/:.*$//')
+	mpc playlist > ~/.mympcplaylist
+	sed -r -i 's/(.*)/\L\1/' ~/.mympcplaylist
+	export tmpname="$(cat ~/.mympcplaylist | wimenu)"
+	if [ "x$tmpname" != "x" ]; then
+		mpc play $(cat ~/.mympcplaylist | grep -F --color=never -n "$tmpname" | sed 's/:.*$//')
 	fi
+Key $MODKEY-mod1-space
+	isplaying=$(mpc | grep -c '\[play')
+	a=`echo 'Artist\nAlbum\nAlbumArtist\nTitle\nTrack\nName\nGenre\nDate\nComposer\nPerformer\nComment\nDisc' | wimenu`
+	if [ "$?" = "0" ]; then
+		b=`mpc list $a | wimenu`
+	fi
+	if [ "$?" = "0" ]; then
+		mpc clear
+		mpc search $a "$b" | mpc add
+		[ $isplaying = 0 ] || mpc toggle
+	fi
+Key XF86AudioRaiseVolume
 !
 true;
 }
