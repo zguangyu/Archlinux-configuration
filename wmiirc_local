@@ -124,6 +124,13 @@ Key $MODKEY-mod1-space
 		[ $isplaying = 0 ] || mpc toggle
 	fi
 Key XF86AudioRaiseVolume
+	amixer sset 'Master' 6%+
+	echo -n label $(amixer sget 'Master' | grep --color=never 'Mono[^\[]*\[[0-9]*%\]' | sed -r 's/^.*\[([0-9]*%)\].*$/\1/') | wmiir write /rbar/status
+Key XF86AudioLowerVolume
+	amixer sset 'Master' 6%-
+	echo -n label $(amixer sget 'Master' | grep --color=never 'Mono[^\[]*\[[0-9]*%\]' | sed -r 's/^.*\[([0-9]*%)\].*$/\1/') | wmiir write /rbar/status
+
+
 !
 true;
 }
