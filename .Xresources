@@ -1,14 +1,16 @@
 Xft.dpi:96
 !Xcursor.theme:	Obsidian
 !! RXVT-unicode setting
-!URxvt.depth:		32
+URxvt.depth:		32
 URxvt.buffered:         true
 !URxvt.depth:            32
 !URxvt.background:       rgba:0Af0/0Af0/0Af0/dddd
 !URxvt.foreground:       white
 URxvt.geometry:		100x50
-URxvt.background:	grey20
+!URxvt.background:	grey20
 !URxvt.background:	rgba:ffff/ffff/ffff/dddd
+!urxvt*depth:32
+urxvt*background:rgba:2000/2000/2000/cccc
 URxvt.foreground:	white	
 URxvt.scrollBar:	true	
 URxvt.scrollstyle:	plain
@@ -41,9 +43,11 @@ Xcursor.theme:Neutral
 URxvt*perl-ext: default,matcher,tabbedex,url-select
 URxvt.keysym.M-u:    perl:url-select:select_next
 URxvt.underlineURLs: true
-URxvt*urlLauncher:opera
-URxvt.colorUL: #86a2be
+URxvt*urlLauncher:opera-devel
+URxvt.colorUL: #f0f010
 URxvt.tabbed.tabbar-fg: 2
 URxvt.tabbed.tabbar-bg: 0
 URxvt.tabbed.tab-fg:    3
 URxvt.tabbed.tab-bg:    0
+URxvt.imLocale: zh_CN.utf8
+URxvt.inputMethod: ibus

@@ -130,9 +130,11 @@ else
     POWER_LEVEL_FILE=/sys${DEVICE}/power/control
     POWER_SUSPEND_FILE=/sys${DEVICE}/power/autosuspend
     [[ $VERBOSE == 1 ]] && echo "Suspending $DEVICE by writing to $POWER_LEVEL_FILE"
-    echo 'auto' > "$POWER_LEVEL_FILE"
-    echo '0' > "$POWER_SUSPEND_FILE"
     echo -n "${DEV_BUS_ID}" > /sys/bus/usb/drivers/usb/unbind
+    sleep 1
+    echo '0' > "$POWER_SUSPEND_FILE"
+    sleep 1
+    echo 'auto' > "$POWER_LEVEL_FILE"
     sleep 1
     [[ $REMOVE == 1 ]] && echo "Remove device"
     [[ $REMOVE == 1 ]] && echo "1" > /sys${DEVICE}/remove

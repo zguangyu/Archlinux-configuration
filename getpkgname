@@ -1,10 +1,15 @@
 #!/usr/bin/perl
 open PKG,$ARGV[0];
+$prefix=$ARGV[1];
+$prefix='' if($prefix eq '-');
 $name='';
 while(<PKG>){
-	if(/pkgname=(?<name>[\w\-]+)/){
-		chomp $+{name};
-		$name.=$+{name};
+	if(/pkgname=\(?(?<name>(\'?[\w\-]+\'?\s*)*)/){
+		#chomp $+{name};
+		$tmp=$+{name};
+		chomp $tmp;
+		$tmp=~s/\'?([^\'\s]+)\'?/$prefix\1-\*.pkg.tar.xz /g;
+		$name.=$tmp;
 		last;
 	}
 }
@@ -22,5 +27,4 @@ while(<PKG>){
 #		last;
 #	}
 #}
-$name.="-*.pkg.tar.xz";
 print "$name\n";

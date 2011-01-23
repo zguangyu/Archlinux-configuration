@@ -5,27 +5,35 @@ WMII_FONT="xft:sans-9"
 WMII_TERM="urxvtc"
 #WMII_NORMCOLORS='#000000 #333333 #000000'
 #WMII_FOCUSCOLORS='#000000 #ffffff #000000'
+WMII_FOCUSCOLORS='#EEEEEE #005577 #006699'
+WMII_BACKGROUND='#111111'
+WMII_NORMCOLORS='#BBBBBB #222222 #000000'
 status() {
-	echo -n  label $(acpi -b | sed 's/Battery\s*[0-9]:\s*//g;s/\([0-9]\)[^0-9]*$/\1/g') '|' \
-	$(sensors | grep --color=never 'Core' | sed 's/.*Core */CPU/g' | sed 's/(.*)//g') '|' \
-	$(mpc | sed -r 'N;s/\n/ /g;N;s/\n/ /g;s/\[(playing|(p)aused)\]/\u\2/g;s/#//g;s/volume: */Vo:/g;s/\S*: *off//g;s/(\S\S)\S*: *on/\u\1 /g;s/\s+/ /g;s/\s+$//g;s|[0-9]+/[0-9]+||g;s/\s+[0-9]+:+[0-9]+//g;s/\([0-9]*%\)\s//g') '|' \
-	$(date +"%Y/%m/%d,%a,%H:%M:%S")
+#	echo -n  label $(acpi -b | sed 's/Battery\s*[0-9]:\s*//g;s/\([0-9]\)[^0-9]*$/\1/g') '|' \
+#	$(sensors | grep --color=never 'Core' | sed 's/.*Core */CPU/g' | sed 's/(.*)//g') '|' \
+#	$(mpc | sed -r 'N;s/\n/ /g;N;s/\n/ /g;s/\[(playing|(p)aused)\]/\u\2/g;s/#//g;s/volume: */Vo:/g;s/\S*: *off//g;s/(\S\S)\S*: *on/\u\1 /g;s/\s+/ /g;s/\s+$//g;s|[0-9]+/[0-9]+||g;s/\s+[0-9]+:+[0-9]+//g;s/\([0-9]*%\)\s//g') '|' \
+	echo -n label $(date +"%Y/%m/%d,%a,%H:%M:%S")
 }
 startup() {
+	export WMII_FOCUSCOLORS='#EEEEEE #005577 #006699'
+	export WMII_BACKGROUND='#111111'
+	export WMII_NORMCOLORS='#BBBBBB #222222 #000000'
 	urxvtd -q -o -f &
 	xset m 8/5 3/2 
 	witray -s 16 &
+	wmiir xwrite /ctl "focuscolors $WMII_FOCUSCOLORS"
+	wmiir xwrite /ctl "normcolors $WMII_NORMCOLORS"
 	wmiir write /rules <<!
 	/MPlayer|VLC/ floating=on 
 	/^ROX-Filer:/ group=0
 	/wesnoth.*/ floating=on
 	/Gimp/ floating=on
-	/ncmpc_to_music_tag/ tags=music
 	/Are you sure/ floating=on
 	/^skype.*Options$/ floating=on
 	/fetion/ floating=on
+	/gmpc/ tags=music
 !
-	/home/shui/cpuu.sh &
+	/home/shui/.conky/conky.sh &
 }
 local_events(){
 wi_events <<'!'
@@ -88,7 +96,7 @@ Key $MODKEY-Shift-z
 Key $MODKEY-Control-z
 	isplaying=$(mpc | grep -c '\[play')
 	mpc update 
-	export tmpname="$(mpc listall | /home/shui/dlist.pl  | sort -u | wimenu)"
+	export tmpname="$(mpc listall | /home/shui/dlist.pl  | sort -u | sed 's/^$/ /g'| wimenu)"
 	echo "$tmpname" >> /home/shui/tmptmptmp
 	if [ "x$tmpname" != "x" ]; then
 		mpc clear
@@ -101,28 +109,42 @@ Key $MODKEY-Control-l
 	xlock &
 Key $MODKEY-Control-s
 	ibus-daemon -r -d --xim
-	feh --bg-scale ~/miku.jpg
-	urxvtc -title ncmpc_to_music_tag -e ncmpc -m
-	wicd-client &
+	feh --bg-scale ~/pictures/sh.jpg
+	gmpc &
+	nm-applet &
 	urxvtc
 Key $MODKEY-Shift-x
 	mpc playlist > ~/.mympcplaylist
 	sed -r -i 's/(.*)/\L\1/' ~/.mympcplaylist
-	export tmpname="$(cat ~/.mympcplaylist | wimenu)"
+	export tmpname="$(cat ~/.mympcplaylist | sed 's/^$/ /g' | wimenu)"
 	if [ "x$tmpname" != "x" ]; then
 		mpc play $(cat ~/.mympcplaylist | grep -F --color=never -n "$tmpname" | sed 's/:.*$//')
 	fi
 Key $MODKEY-mod1-space
 	isplaying=$(mpc | grep -c '\[play')
-	a=`echo 'Artist\nAlbum\nAlbumArtist\nTitle\nTrack\nName\nGenre\nDate\nComposer\nPerformer\nComment\nDisc' | wimenu`
+	a=`echo 'any\nArtist\nAlbum\nAlbumArtist\nTitle\nTrack\nName\nGenre\nDate\nComposer\nPerformer\nComment\nDisc' | wimenu`
 	if [ "$?" = "0" ]; then
-		b=`mpc list $a | wimenu`
+		if [ $a != "any" ]; then
+			b=`mpc list $a | sed 's/^$/ /g' | wimenu`
+			if [ "$?" = "0" ]; then
+				mpc clear
+				mpc search $a "$b" | mpc add
+				[ $isplaying = 0 ] || mpc toggle
+			fi
+		else
+			b=`echo ' ' | wimenu`
+			if [ "$?" = "0" ]; then
+				c=`mpc search $a "$b"| sed 's/^$/ /g' | wimenu`
+				if [ "$?" = "0" ]; then
+					mpc clear
+					echo $c | mpc add
+					[ $isplaying = 0 ] || mpc toggle
+				fi
+			fi
+		fi
 	fi
-	if [ "$?" = "0" ]; then
-		mpc clear
-		mpc search $a "$b" | mpc add
-		[ $isplaying = 0 ] || mpc toggle
-	fi
+Key $MODKEY-Control-w
+	notify-send  -t 0 Weather "`perl programs/ttrss.pl `"
 Key XF86AudioRaiseVolume
 	amixer sset 'Master' 6%+
 	echo -n label $(amixer sget 'Master' | grep --color=never 'Mono[^\[]*\[[0-9]*%\]' | sed -r 's/^.*\[([0-9]*%)\].*$/\1/') | wmiir write /rbar/status
