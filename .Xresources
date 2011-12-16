@@ -1,3 +1,6 @@
+emacs.title:Emacs only for Guangyu
+emacs.BorderWidth:0
+
 Xft.dpi:96
 !Xcursor.theme:	Obsidian
 !! RXVT-unicode setting
@@ -12,9 +15,9 @@ URxvt.geometry:		100x50
 !urxvt*depth:32
 urxvt*background:rgba:2000/2000/2000/cccc
 URxvt.foreground:	white	
-URxvt.scrollBar:	true	
-URxvt.scrollstyle:	plain
-URxvt.loginSheel:	True
+URxvt.scrollBar:	false	
+!URxvt.scrollstyle:	plain
+URxvt.loginSheel:	false
 ! Use shift+pageup/down to scroll in screen
 URxvt.secondaryScroll:	True
 URxvt.transparent:	true	
@@ -23,21 +26,21 @@ URxvt.shading:		50
 URxvt.saveLines:	5000
 URxvt.preeditType:	Root
 URxvt.borderLess:	false	
-URxvt.title:		urxvt
+URxvt.title:		Rxvt-Unicode
 !URxvt.boldFont:		xft:文泉驿等宽正黑:bold:pixelsize=12:antialias=True
 !URxvt.boldFont:		xft:Bitstream Vera Sans Mono:bold:pixelsize=12:antialias=True
-URxvt.boldFont:		xft:monospace:bold:pixelsize=12:antialias=True
+URxvt.boldFont:		xft:inconsolata:bold:pixelsize=14:antialias=True
 !URxvt.font:		xft:文泉驿等宽正黑:medium:pixelsize=12:antialias=True
 !URxvt.font:		xft:Bitstream Vera Sans Mono:medium:pixelsize=12:antialias=True
-URxvt.font:		xft:monospace:medium:pixelsize=12:antialias=True
+URxvt.font:		xft:inconsolata:medium:pixelsize=14:antialias=True
 URxvt.color0:		grey20	
-!URxvt.perl-ext-common:	default,tabbed
+URxvt.perl-ext-common:	default,tabbed
 Xft.antialias:1
 Xft.hinting:1
 Xft.hintstyle:hintfull
 Xft.rgba:vrgb
 XTerm*faceName:monospace
-Emacs.Font:monospace 11
+!Emacs.Font:monospace 11
 !Xcursor.theme:Vanilla-DMZ
 Xcursor.theme:Neutral
 URxvt*perl-ext: default,matcher,tabbedex,url-select
@@ -50,4 +53,4 @@ URxvt.tabbed.tabbar-bg: 0
 URxvt.tabbed.tab-fg:    3
 URxvt.tabbed.tab-bg:    0
 URxvt.imLocale: zh_CN.utf8
-URxvt.inputMethod: ibus
+URxvt.inputMethod: fcitx
