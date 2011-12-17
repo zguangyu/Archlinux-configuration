@@ -2,8 +2,10 @@
 (setq auto-mode-alist (append '(("/*.\.php[345]?$" . php-mode)) auto-mode-alist))
 (autoload 'python-mode "python-mode.el" "Python mode." t)
 (setq auto-mode-alist (append '(("/*.\.py$" . python-mode)) auto-mode-alist))
-(autoload 'pkgbuild-mode "pkgbuild-mode.el" "PKGBUILD mode." t)
-(setq auto-mode-alist (appemd '(("/PKGBUILD$" . pkgbuild-mode)) auto-mode-alist))
+
+
+;;(autoload 'pkgbuild-mode "pkgbuild-mode.el" "PKGBUILD mode." t)
+;;(setq auto-mode-alist (append '(("/PKGBUILD$" . pkgbuild-mode)) auto-mode-alist))
 
 ;;--------Color Theme---------
 ;; This requires ColorTheme plugin which is called emacs-color-theme in the AUR

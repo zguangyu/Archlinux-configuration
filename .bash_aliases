@@ -1,5 +1,5 @@
 alias pacman='pacman-color'
-alias less='less-R'
+alias less='less -R'
 alias df='df -Th'
 alias du='du -h'
 alias free='free -m'
@@ -23,7 +23,6 @@ if [ -x /bin/dircolors ]; then
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
 fi
-alias ls='ls --clolr'
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
